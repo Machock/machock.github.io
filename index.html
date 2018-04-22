@@ -337,7 +337,7 @@
       
         
           
-            <h2 id="javscript中的强制类型转换"><a href="#javscript中的强制类型转换" class="headerlink" title="javscript中的强制类型转换"></a>javscript中的强制类型转换</h2><ol>
+            <h2 id="javscript中的强制类型转换"><a href="#javscript中的强制类型转换" class="headerlink" title="javscript中的强制类型转换"></a><strong>javscript中的强制类型转换</strong></h2><ol>
 <li><strong>抽象操作</strong><ul>
 <li><strong>ToString</strong></li>
 <li><strong>ToNumber</strong></li>
@@ -359,11 +359,12 @@
 <li><strong>宽松相等</strong><ul>
 <li><strong>性能比较</strong></li>
 <li><strong>隐式强制转换为布尔值</strong></li>
-<li><strong>显示转换为布尔值</strong><br>在JavaScript编程中经常用到类型转换,其中包括显示(类型)转换,隐式(强制类型)转换,对于阅读代码的人而言,理解’显示’与隐式也不一致,不过大致可以理解为对于阅读代码的人来讲,能看懂的就叫’显示’,否则即为’隐式’。<h2 id="抽象操作"><a href="#抽象操作" class="headerlink" title="抽象操作"></a><strong>抽象操作</strong></h2>在介绍类型转换之前，需要掌握字符串、数字、布尔之间的相互转换，既ToString、ToNumber、ToBoolean，以及 ToPromitive的抽象操作。<h3 id="ToString"><a href="#ToString" class="headerlink" title="ToString"></a><strong>ToString</strong></h3>基本类型的字符串转化： <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">null=&gt;&apos;null&apos;</div><div class="line">undefined =&gt; &apos;undefined&apos;</div><div class="line">true=&gt;&apos;true&apos;</div></pre></td></tr></table></figure>
-</li>
+<li><strong>显示转换为布尔值</strong><br>在JavaScript编程中经常用到类型转换,其中包括显示(类型)转换,隐式(强制类型)转换,对于阅读代码的人而言,理解’显示’与隐式也不一致,不过大致可以理解为对于阅读代码的人来讲,能看懂的就叫’显示’,否则即为’隐式’。</li>
 </ul>
 </li>
 </ol>
+<h2 id="抽象操作"><a href="#抽象操作" class="headerlink" title="抽象操作"></a><strong>抽象操作</strong></h2><p>在介绍类型转换之前，需要掌握字符串、数字、布尔之间的相互转换，既ToString、ToNumber、ToBoolean，以及 ToPromitive的抽象操作。</p>
+<h3 id="ToString"><a href="#ToString" class="headerlink" title="ToString"></a><strong>ToString</strong></h3><p>基本类型的字符串转化：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">null=&gt;&apos;null&apos;</div><div class="line">undefined =&gt; &apos;undefined&apos;</div><div class="line">true=&gt;&apos;true&apos;</div></pre></td></tr></table></figure></p>
 <p>极大数以积极小数的转换使用指数形式表示：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">var a = 1.07 * 1000 * 1000 * 1000 * 1000 * 1000 * 1000 * 1000 ;</div><div class="line">a.toString()    // &apos;1.07e+21&apos;</div></pre></td></tr></table></figure></p>
 <p>对象执行toString(), 使用(Object.prototype.toString) 返回内部属性[[Class]]的值, 如’[object Object]’<br>数组使用toString:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">var a = [1,2,3]  </div><div class="line">a.toString() // &apos;1,2,3&apos;</div></pre></td></tr></table></figure></p>
 <p>JSON字符串化<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">JSON.stringify(42)  // &apos;42&apos;</div><div class="line">JSON.stringify(&apos;42&apos;)  // &apos;42&apos;</div><div class="line">JSON.stringify(null)  // &apos;42&apos;</div><div class="line">JSON.stringify(true)  // &apos;true&apos;</div></pre></td></tr></table></figure></p>
