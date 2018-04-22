@@ -1,0 +1,733 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="javscript中的强制类型转换 抽象操作 ToString ToNumber ToBoolean   显示强制类型转换 字符串与数字之间转换 显示解析数字字符串 显示转换为布尔值   隐式强制类型转换 字符串与数字之间的强制隐式转换 隐式强制转换为布尔值 显示转换为布尔值   宽松相等 性能比较 隐式强制转换为布尔值 显示转换为布尔值在JavaScript编程中经常用到类型转换,其中包括显示(">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Machock">
+<meta property="og:url" content="https://machock.github.io/2018/04/22/javascript类型转换/index.html">
+<meta property="og:site_name" content="Machock">
+<meta property="og:description" content="javscript中的强制类型转换 抽象操作 ToString ToNumber ToBoolean   显示强制类型转换 字符串与数字之间转换 显示解析数字字符串 显示转换为布尔值   隐式强制类型转换 字符串与数字之间的强制隐式转换 隐式强制转换为布尔值 显示转换为布尔值   宽松相等 性能比较 隐式强制转换为布尔值 显示转换为布尔值在JavaScript编程中经常用到类型转换,其中包括显示(">
+<meta property="og:updated_time" content="2018-04-22T07:53:10.053Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Machock">
+<meta name="twitter:description" content="javscript中的强制类型转换 抽象操作 ToString ToNumber ToBoolean   显示强制类型转换 字符串与数字之间转换 显示解析数字字符串 显示转换为布尔值   隐式强制类型转换 字符串与数字之间的强制隐式转换 隐式强制转换为布尔值 显示转换为布尔值   宽松相等 性能比较 隐式强制转换为布尔值 显示转换为布尔值在JavaScript编程中经常用到类型转换,其中包括显示(">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://machock.github.io/2018/04/22/javascript类型转换/"/>
+
+
+
+
+
+  <title>  | Machock </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Machock</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">博客</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://machock.github.io/2018/04/22/javascript类型转换/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Machock">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Machock">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-22T16:24:46+08:00">
+                2018-04-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/04/22/javascript类型转换/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/04/22/javascript类型转换/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="javscript中的强制类型转换"><a href="#javscript中的强制类型转换" class="headerlink" title="javscript中的强制类型转换"></a>javscript中的强制类型转换</h1><ol>
+<li><strong>抽象操作</strong><ul>
+<li><strong>ToString</strong></li>
+<li><strong>ToNumber</strong></li>
+<li><strong>ToBoolean</strong></li>
+</ul>
+</li>
+<li><strong>显示强制类型转换</strong><ul>
+<li><strong>字符串与数字之间转换</strong></li>
+<li><strong>显示解析数字字符串</strong></li>
+<li><strong>显示转换为布尔值</strong></li>
+</ul>
+</li>
+<li><strong>隐式强制类型转换</strong><ul>
+<li><strong>字符串与数字之间的强制隐式转换</strong></li>
+<li><strong>隐式强制转换为布尔值</strong></li>
+<li><strong>显示转换为布尔值</strong></li>
+</ul>
+</li>
+<li><strong>宽松相等</strong><ul>
+<li><strong>性能比较</strong></li>
+<li><strong>隐式强制转换为布尔值</strong></li>
+<li><strong>显示转换为布尔值</strong><br>在JavaScript编程中经常用到类型转换,其中包括显示(类型)转换,隐式(强制类型)转换,对于阅读代码的人而言,理解’显示’与隐式也不一致,不过大致可以理解为对于阅读代码的人来讲,能看懂的就叫’显示’,否则即为’隐式’。<h2 id="抽象操作"><a href="#抽象操作" class="headerlink" title="抽象操作"></a><strong>抽象操作</strong></h2>在介绍类型转换之前，需要掌握字符串、数字、布尔之间的相互转换，既ToString、ToNumber、ToBoolean，以及 ToPromitive的抽象操作。<h4 id="ToString"><a href="#ToString" class="headerlink" title="ToString"></a><strong>ToString</strong></h4>基本类型的字符串转化： <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">null=&gt;&apos;null&apos;</div><div class="line">undefined =&gt; &apos;undefined&apos;</div><div class="line">true=&gt;&apos;true&apos;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ol>
+<p>极大数以积极小数的转换使用指数形式表示：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">var a = 1.07 * 1000 * 1000 * 1000 * 1000 * 1000 * 1000 * 1000 ;</div><div class="line">a.toString()    // &apos;1.07e+21&apos;</div></pre></td></tr></table></figure></p>
+<p>对象执行toString(), 使用(Object.prototype.toString) 返回内部属性[[Class]]的值, 如’[object Object]’<br>数组使用toString:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">var a = [1,2,3]  </div><div class="line">a.toString() // &apos;1,2,3&apos;</div></pre></td></tr></table></figure></p>
+<p>JSON字符串化<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">JSON.stringify(42)  // &apos;42&apos;</div><div class="line">JSON.stringify(&apos;42&apos;)  // &apos;42&apos;</div><div class="line">JSON.stringify(null)  // &apos;42&apos;</div><div class="line">JSON.stringify(true)  // &apos;true&apos;</div></pre></td></tr></table></figure></p>
+<p>如果对象中遇到 undefined、function、symbol 会自动忽略，在数组中则返回null<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">JSON.stringify(undefined)  // undefined</div><div class="line">JSON.stringify(function()&#123;&#125;)    // undefined</div><div class="line">JSON.stringify([1,null,undefined,function()&#123;&#125;, 4])  //&apos;[1,null,null,4]&apos;</div><div class="line">JSON.stringify(&#123;a: function()&#123;&#125;, b: 1&#125;) // &apos;&#123;b:1&#125;&apos;</div></pre></td></tr></table></figure></p>
+<h4 id="ToNumber"><a href="#ToNumber" class="headerlink" title="ToNumber"></a><strong>ToNumber</strong></h4><p>基本类型的数字转化：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">true =&gt; 1</div><div class="line">undefined =&gt; NAN</div><div class="line">false=&gt; 0</div><div class="line">null =&gt; 0</div></pre></td></tr></table></figure></p>
+<p>为了将值转化为基础类型,抽象操作ToPromitive回先检查改值是否有valueOf()方法,如果有并返回基本类型值,再进行强制类型转换. 如果没有就是用toString()的返回值(如果有)进行强制转换,如果均不返回基本类型值,就会报错 typeerror<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">var a = &#123;</div><div class="line">    valueOf: function()&#123;return 5;&#125;</div><div class="line">&#125;</div><div class="line">var b = &#123;</div><div class="line">    toString: function()&#123;return 5;&#125;</div><div class="line">&#125;</div><div class="line">var c = [4,2];</div><div class="line">c.toString: function()&#123;</div><div class="line">    return this.join(&apos;&apos;)</div><div class="line">&#125;</div><div class="line">Number(a)   // 5</div><div class="line">Number(b)   // 5</div><div class="line">Number(c)   // 42</div><div class="line">Number(&apos;&apos;)  // 0</div><div class="line">Number([])  // 0</div><div class="line">Number([&apos;abc&apos;]) // NAN</div></pre></td></tr></table></figure></p>
+<h4 id="ToBoolean"><a href="#ToBoolean" class="headerlink" title="ToBoolean"></a><strong>ToBoolean</strong></h4><p>假值:除了假值即为真值<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">undefined</div><div class="line">null</div><div class="line">false</div><div class="line">+0 -0 NAN</div><div class="line">&quot;&quot;</div></pre></td></tr></table></figure></p>
+<p>假值对象:即为对假值封装的对象.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">var a = new Booleab(false)  // true</div><div class="line">var b = new Number(0)       // true</div><div class="line">var c = new String(&quot;&quot;)      // true</div><div class="line">// 因为使用new对构造函数实例化,是通过封装对象对基本类型进行封装,既基本类型值外面使用对象包裹.</div></pre></td></tr></table></figure></p>
+<h2 id="显示强制类型转换"><a href="#显示强制类型转换" class="headerlink" title="显示强制类型转换"></a><strong>显示强制类型转换</strong></h2><h3 id="字符串与数字之间转换"><a href="#字符串与数字之间转换" class="headerlink" title="字符串与数字之间转换"></a><strong>字符串与数字之间转换</strong></h3><p>数字和字符串之间的转换是通过String()和Number()这两个内建函数,并不通过new关键字创建<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">var a = 42;</div><div class="line">var b = String(a)   // &apos;42&apos;</div><div class="line">var c = &quot;3.14&quot;</div><div class="line">var d = Number(c)   // 3.14</div></pre></td></tr></table></figure></p>
+<p>使用toString()和 +<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">var a = 42;</div><div class="line">a.toString()   // &apos;42&apos;</div><div class="line">var c = &quot;3.14&quot;</div><div class="line">+c   // 3.14</div></pre></td></tr></table></figure></p>
+<p>日期的显示转换为数字:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">var a = new Date()</div><div class="line">+a  //  1524369274939 获得的是时间戳</div><div class="line"> new Date().getTime() === (new Date).getTime() === Date.now()</div></pre></td></tr></table></figure></p>
+<p>运算符 ~ :~ 返回2的补码:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">var a = -1;</div><div class="line">~a ==&gt; -(a+1)   // 0</div><div class="line">~42 //  -43</div><div class="line">// 技巧: </div><div class="line">var b = &apos;abc&apos;</div><div class="line">~b.indexOf(&apos;d&apos;) // 0</div></pre></td></tr></table></figure></p>
+<p>~~字位截除: 只是用32位数字<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">~~32.3  // 32</div><div class="line">~~-32.3 // -32</div><div class="line">// 取整,用于去除小数点</div></pre></td></tr></table></figure></p>
+<h3 id="显示解析数字字符串"><a href="#显示解析数字字符串" class="headerlink" title="显示解析数字字符串"></a><strong>显示解析数字字符串</strong></h3><p>Number(): 只能接收数字字符串,否则会转换失败返回NAN.<br>parseFloat(): 解析浮点字符串,直到解析遇到字符串或者解析到最后<br>parseInt(): 只能解析字符串<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">parseInt([&quot;32A&quot;,&apos;212&apos;,&apos;Naaa&apos;])  // 32</div><div class="line">parseInt(true)  //  NAN</div><div class="line">parseInt(function()&#123;&#125;)  // NAN</div></pre></td></tr></table></figure></p>
+<h4 id="解析非字符串"><a href="#解析非字符串" class="headerlink" title="解析非字符串"></a><strong>解析非字符串</strong></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">parseInt(1/0,19)    //  18</div><div class="line">// 释义: parseInt只能接收字符串, 1/0 ==&gt; Infinity</div><div class="line">// 基数19: 有字符付范围是0-9和a-i(区分大小写)</div><div class="line">// I刚好是19,第二个字符&apos;n&apos;不在范围内,不是一个有效字符,解析完毕</div><div class="line">parseInt(0.000008)  // 0</div><div class="line">parseInt(0.0000008) // 8 (来自于&apos;8e-7&apos;)</div><div class="line">parseInt(false,16)  // 250 (fa来自于&apos;false&apos;)    0-15</div><div class="line">parseInt(&apos;0x10&apos;)    // 16</div><div class="line">parseInt(&apos;103&apos;,2)   // 2  1*2^1 + 0*2^0</div></pre></td></tr></table></figure>
+<h4 id="显示转换布尔值"><a href="#显示转换布尔值" class="headerlink" title="显示转换布尔值"></a><strong>显示转换布尔值</strong></h4><p>使用 Boolean()进行转换.</p>
+<h2 id="隐式强制类型转换"><a href="#隐式强制类型转换" class="headerlink" title="隐式强制类型转换"></a><strong>隐式强制类型转换</strong></h2><h4 id="字符串与数字之间的强制隐式转换"><a href="#字符串与数字之间的强制隐式转换" class="headerlink" title="字符串与数字之间的强制隐式转换"></a><strong>字符串与数字之间的强制隐式转换</strong></h4><p>使用 + 号进行字符串与数字的连接<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">var a = &apos;42&apos;</div><div class="line">var b = 0</div><div class="line">a + b   //  &apos;420&apos;</div><div class="line">var c = [1,2]</div><div class="line">var d = [3,4]</div><div class="line">c + d   //  &apos;1,23,4&apos;</div></pre></td></tr></table></figure></p>
+<p>数字和空字符串相 + 转换为字符串<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">var a = 42</div><div class="line">var b = &apos;&apos;</div><div class="line">a + b   // &apos;42&apos;</div></pre></td></tr></table></figure></p>
+<p>使用 a + ‘’ 和String(a)是不一样的.<br>a + ‘’ : 使用ToPromitive抽象操作(先调用valueOf,然后通过ToString返回字符串)<br>ToString: 直接调用toString() 方法<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">var a = &#123;</div><div class="line">    valueOf: function()&#123; return 42 &#125;,</div><div class="line">    toString: function() &#123; return 1 &#125;</div><div class="line">&#125;</div><div class="line">a + &apos;&apos;  //  &apos;42&apos;</div><div class="line">String(a)   // &apos;1&apos;</div></pre></td></tr></table></figure></p>
+<p>字符串转换为数字的情况:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">var a = [3]</div><div class="line">var b = [1]</div><div class="line">a - b   // 2</div></pre></td></tr></table></figure></p>
+<h4 id="布尔值到数字的隐式强制转换"><a href="#布尔值到数字的隐式强制转换" class="headerlink" title="布尔值到数字的隐式强制转换"></a><strong>布尔值到数字的隐式强制转换</strong></h4><p>转换为布尔值的情况:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">if(...)</div><div class="line">for(..,..,..)</div><div class="line">while(...)和 do .. while(..)</div><div class="line">? .. : ..</div><div class="line">|| 和 &amp;&amp;</div></pre></td></tr></table></figure></p>
+<p>&amp;&amp; 和 || 返回两个之中的一个:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">var a = 42</div><div class="line">var b = &apos;abc&apos;</div><div class="line">var c = null</div><div class="line">a || b  // 42 第一个值为true则去第一个否则取后面一个</div><div class="line">c &amp;&amp; b  // null c为真 后面的则为返回值</div></pre></td></tr></table></figure></p>
+<h4 id="符号的强制类型转换"><a href="#符号的强制类型转换" class="headerlink" title="符号的强制类型转换"></a><strong>符号的强制类型转换</strong></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">var s1 = Symbol(&apos;cool&apos;)</div><div class="line">String(s1)  //  &apos;Symbol(cool)&apos;</div><div class="line">s1 + &quot;&quot;     // typeError</div></pre></td></tr></table></figure>
+<h2 id="宽松相等"><a href="#宽松相等" class="headerlink" title="宽松相等"></a><strong>宽松相等</strong></h2><p>‘==’允许强制类型转换,’===’不允许</p>
+<h3 id="性能比较"><a href="#性能比较" class="headerlink" title="性能比较"></a><strong>性能比较</strong></h3><p>严格来讲’==’多做了一个强制类型转换的操作,但性能相差微乎其微</p>
+<h3 id="抽象相等"><a href="#抽象相等" class="headerlink" title="抽象相等"></a><strong>抽象相等</strong></h3><h4 id="字符串和数字之间的比较"><a href="#字符串和数字之间的比较" class="headerlink" title="字符串和数字之间的比较"></a><strong>字符串和数字之间的比较</strong></h4><p>规范定义:</p>
+<blockquote>
+<p>(1) 如果Type(x)为数字,Type(y)是字符串,则返回 x == ToNumber(y)<br>(2) 如果Type(x)为字符串,Type(y)是数字,则返回 ToNumber(x) == y<br>结论将字符串执行ToNumber() 后进行比较<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">var a = 42</div><div class="line">var b = &apos;42&apos;</div><div class="line">a == b      // true</div><div class="line">a === b     // false</div></pre></td></tr></table></figure></p>
+</blockquote>
+<h4 id="字符串和数字之间的比较-1"><a href="#字符串和数字之间的比较-1" class="headerlink" title="字符串和数字之间的比较"></a><strong>字符串和数字之间的比较</strong></h4><p>规范定义:</p>
+<blockquote>
+<p>(1) 如果Type(x)为布尔类型,则返回 ToNumber(x) == y<br>(2) 如果Type(y)为布尔类型,则返回 x == ToNumber(y)<br>结论将布尔值执行ToNumber() 后进行比较<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">var a = true</div><div class="line">var b = &apos;32&apos;</div><div class="line">var c = &apos;1&apos;</div><div class="line">a == b      // false</div><div class="line">a == c      // true</div></pre></td></tr></table></figure></p>
+</blockquote>
+<h4 id="null-和-undefined-之间的比较"><a href="#null-和-undefined-之间的比较" class="headerlink" title="null 和 undefined 之间的比较"></a><strong>null 和 undefined 之间的比较</strong></h4><p>规范定义:</p>
+<blockquote>
+<p>(1) 如果x为null,y为undefined,返回true<br>(2) 如果x为undefined,y为null,返回true<br>结论: 使用null == undefined 是安全可靠的,避免了0,false和’’这样的假值<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">var a = null</div><div class="line">var b </div><div class="line">a == b      // true</div><div class="line">a == null   // true</div><div class="line">b == null   // true</div><div class="line">a == &apos;&apos;     //false</div><div class="line">b == &apos;&apos;     //false</div><div class="line">a == 0      //false</div><div class="line">a == 0      //false</div></pre></td></tr></table></figure></p>
+</blockquote>
+<h4 id="对象-和-非对象-之间的比较"><a href="#对象-和-非对象-之间的比较" class="headerlink" title="对象 和 非对象 之间的比较"></a><strong>对象 和 非对象 之间的比较</strong></h4><p>规范定义:</p>
+<blockquote>
+<p>(1) 如果Type(x)为字符串或数字,Type(y)为对象,则返回 x == ToPrimitive(y)<br>(2) 如果Type(x)为对象,Type(y)为字符串或数字,则返回 ToPrimitive(x) == y<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">var a = 42</div><div class="line">var b = [&apos;42&apos;]</div><div class="line">a == b      // true</div><div class="line">var c = &apos;abc&apos;</div><div class="line">var d = Object(a)   // 使用封装对象进行封装</div><div class="line">c == d      // true</div><div class="line">c === d     // false</div><div class="line">var e = null </div><div class="line">var f = Object(e)</div><div class="line">e == f      // false</div><div class="line">var g = undefined </div><div class="line">var h = Object(e)</div><div class="line">g == h      // false</div><div class="line">var k = NAN </div><div class="line">var j = Object(k)</div><div class="line">k == j      // false</div><div class="line">k != j      // true</div></pre></td></tr></table></figure></p>
+<p>null 和undefined 均不能被封装,Object(null) 得到 一个常规对象 {}<br>NaN能够被封装为数字封装对象,拆封后 NAN == NAN 为 false</p>
+<h2 id="抽象关系比较"><a href="#抽象关系比较" class="headerlink" title="抽象关系比较"></a><strong>抽象关系比较</strong></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">st=&gt;start: 开始比较</div><div class="line">op=&gt;operation: 根据ToNumber规则将双方强制类型转换为数字进行比较</div><div class="line">op2=&gt;operation: 都是字符串,按照字母顺序来比较(ASCII码)</div><div class="line">cond=&gt;condition: 都是字符串比较</div><div class="line">e=&gt;end</div><div class="line"></div><div class="line">st-&gt;cond</div><div class="line">cond(yes)-&gt;op2</div><div class="line">cond(no)-&gt;op</div></pre></td></tr></table></figure>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">var a = [42]</div><div class="line">var b = [&apos;43&apos;]</div><div class="line">a &lt; b      // true</div><div class="line">a &gt; b      // false</div><div class="line">var c = [&apos;42&apos;]</div><div class="line">var d = [&apos;043&apos;]</div><div class="line">a &lt; b       // false</div><div class="line">var e = &#123;b:42&#125;</div><div class="line">var f = &#123;b:42&#125;</div><div class="line">e &lt; f       // false</div><div class="line">e = f       // false</div><div class="line">e &gt; f       // false</div><div class="line">e &lt;= f      // true  结果翻转: 因为 e&gt;f 为 false, 所以e&lt;=f 为true</div><div class="line">e &gt;= f      // true</div></pre></td></tr></table></figure>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/04/22/1/" rel="prev" title="">
+                 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2018/04/22/javascript类型转换/"
+           data-title="" data-url="https://machock.github.io/2018/04/22/javascript类型转换/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="Machock" />
+          <p class="site-author-name" itemprop="name">Machock</p>
+           
+              <p class="site-description motion-element" itemprop="description">JavaScript、css、html</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#javscript中的强制类型转换"><span class="nav-number">1.</span> <span class="nav-text">javscript中的强制类型转换</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#抽象操作"><span class="nav-number">1.1.</span> <span class="nav-text">抽象操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ToString"><span class="nav-number">1.1.0.1.</span> <span class="nav-text">ToString</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ToNumber"><span class="nav-number">1.1.0.2.</span> <span class="nav-text">ToNumber</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ToBoolean"><span class="nav-number">1.1.0.3.</span> <span class="nav-text">ToBoolean</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#显示强制类型转换"><span class="nav-number">1.2.</span> <span class="nav-text">显示强制类型转换</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#字符串与数字之间转换"><span class="nav-number">1.2.1.</span> <span class="nav-text">字符串与数字之间转换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#显示解析数字字符串"><span class="nav-number">1.2.2.</span> <span class="nav-text">显示解析数字字符串</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#解析非字符串"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">解析非字符串</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#显示转换布尔值"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">显示转换布尔值</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#隐式强制类型转换"><span class="nav-number">1.3.</span> <span class="nav-text">隐式强制类型转换</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#字符串与数字之间的强制隐式转换"><span class="nav-number">1.3.0.1.</span> <span class="nav-text">字符串与数字之间的强制隐式转换</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#布尔值到数字的隐式强制转换"><span class="nav-number">1.3.0.2.</span> <span class="nav-text">布尔值到数字的隐式强制转换</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#符号的强制类型转换"><span class="nav-number">1.3.0.3.</span> <span class="nav-text">符号的强制类型转换</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#宽松相等"><span class="nav-number">1.4.</span> <span class="nav-text">宽松相等</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#性能比较"><span class="nav-number">1.4.1.</span> <span class="nav-text">性能比较</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#抽象相等"><span class="nav-number">1.4.2.</span> <span class="nav-text">抽象相等</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#字符串和数字之间的比较"><span class="nav-number">1.4.2.1.</span> <span class="nav-text">字符串和数字之间的比较</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#字符串和数字之间的比较-1"><span class="nav-number">1.4.2.2.</span> <span class="nav-text">字符串和数字之间的比较</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#null-和-undefined-之间的比较"><span class="nav-number">1.4.2.3.</span> <span class="nav-text">null 和 undefined 之间的比较</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#对象-和-非对象-之间的比较"><span class="nav-number">1.4.2.4.</span> <span class="nav-text">对象 和 非对象 之间的比较</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#抽象关系比较"><span class="nav-number">1.5.</span> <span class="nav-text">抽象关系比较</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Machock</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"your-duoshuo-shortname"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>
