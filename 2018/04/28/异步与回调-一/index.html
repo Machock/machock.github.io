@@ -1,0 +1,728 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="异步,回调,时间循环,JavaScript," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="目录 异步:现在与将来 分块程序 事件循环 并行线程 并发 任务 语句顺序   回调 回调的顺序 回调的信任    异步:现在与将来在程序运行中,现在运行的部分和将来运行的部分之间的关系就是异步编程的核心。 分块程序一个程序由多个块组成，当前运行的部分就是现在，剩余的部分就是将来，最常见的块单位是函数。为什么会出现回调：程序中将来执行的部分，并不一定在现在执行完成后立即执行，既现在无法完成的部分将">
+<meta name="keywords" content="异步,回调,时间循环,JavaScript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="异步与性能(一)：异步与回调">
+<meta property="og:url" content="https://machock.github.io/2018/04/28/异步与回调-一/index.html">
+<meta property="og:site_name" content="Machock">
+<meta property="og:description" content="目录 异步:现在与将来 分块程序 事件循环 并行线程 并发 任务 语句顺序   回调 回调的顺序 回调的信任    异步:现在与将来在程序运行中,现在运行的部分和将来运行的部分之间的关系就是异步编程的核心。 分块程序一个程序由多个块组成，当前运行的部分就是现在，剩余的部分就是将来，最常见的块单位是函数。为什么会出现回调：程序中将来执行的部分，并不一定在现在执行完成后立即执行，既现在无法完成的部分将">
+<meta property="og:updated_time" content="2018-05-06T05:36:19.878Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="异步与性能(一)：异步与回调">
+<meta name="twitter:description" content="目录 异步:现在与将来 分块程序 事件循环 并行线程 并发 任务 语句顺序   回调 回调的顺序 回调的信任    异步:现在与将来在程序运行中,现在运行的部分和将来运行的部分之间的关系就是异步编程的核心。 分块程序一个程序由多个块组成，当前运行的部分就是现在，剩余的部分就是将来，最常见的块单位是函数。为什么会出现回调：程序中将来执行的部分，并不一定在现在执行完成后立即执行，既现在无法完成的部分将">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://machock.github.io/2018/04/28/异步与回调-一/"/>
+
+
+
+
+
+  <title> 异步与性能(一)：异步与回调 | Machock </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Machock</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">博客</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://machock.github.io/2018/04/28/异步与回调-一/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Machock">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Machock">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                异步与性能(一)：异步与回调
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-28T09:11:34+08:00">
+                2018-04-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/04/28/异步与回调-一/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/04/28/异步与回调-一/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a><strong>目录</strong></h2><ol>
+<li><strong>异步:现在与将来</strong><ul>
+<li><strong>分块程序</strong></li>
+<li><strong>事件循环</strong></li>
+<li><strong>并行线程</strong></li>
+<li><strong>并发</strong></li>
+<li><strong>任务</strong></li>
+<li><strong>语句顺序</strong></li>
+</ul>
+</li>
+<li><strong>回调</strong><ul>
+<li><strong>回调的顺序</strong></li>
+<li><strong>回调的信任</strong></li>
+</ul>
+</li>
+</ol>
+<h2 id="异步-现在与将来"><a href="#异步-现在与将来" class="headerlink" title="异步:现在与将来"></a><strong>异步:现在与将来</strong></h2><p>在程序运行中,现在运行的部分和将来运行的部分之间的关系就是异步编程的核心。</p>
+<h3 id="分块程序"><a href="#分块程序" class="headerlink" title="分块程序"></a><strong>分块程序</strong></h3><p>一个程序由多个块组成，当前运行的部分就是<strong>现在</strong>，剩余的部分就是<strong>将来</strong>，最常见的<strong>块</strong>单位是函数。<br>为什么会出现回调：程序中<strong>将来</strong>执行的部分，并不一定在<strong>现在</strong>执行完成后立即执行，既现在无法完成的部分将会一步完成<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">var data = ajax(&apos;http://someurl&apos;)   // ajax 没有返回任何值给data</div><div class="line">console.log(data)</div></pre></td></tr></table></figure></p>
+<p>从现在到将来之间的等待最简单的方法就是<strong>回调函数</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">ajax(&apos;someurl&apos;, function(data) &#123;</div><div class="line">  console.log(data)</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
+<p>只要把一段代码封装成一个函数,指定他在相应某个事件(定时器,鼠标点击,ajax响应)时执行,就创建了一个<strong>未来</strong>执行的代码块。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">function now() &#123;</div><div class="line">  return 10;</div><div class="line">&#125;</div><div class="line">function later() &#123;    // 函数内部的代码为未来执行的代码</div><div class="line">  answer = answer * 2</div><div class="line">  console.log(&apos;Meaning is life:&apos;,answer)</div><div class="line">&#125;</div><div class="line">var answer = now()</div><div class="line">setTimeout( later, 1000)</div></pre></td></tr></table></figure></p>
+<blockquote>
+<p>现在:<br>function now() {<br>  return 10;<br>}<br>function later() { … }<br>var answer = now()<br>setTimeout( later, 1000)</p>
+<p>将来:<br>answer = answer * 2<br>console.log(‘Meaning is life:’,answer)</p>
+</blockquote>
+<p><strong>异步控制台</strong><br>console.<em>是由<em>*宿主环境</em></em>添加到JavaScript中的.<br>多数情况下,控制台输出和期望一直。但是控制台I/O会延迟，在调用过程中遇到对象被修改，会出现意料之外的结果。</p>
+<h3 id="事件循环"><a href="#事件循环" class="headerlink" title="事件循环"></a><strong>事件循环</strong></h3><p>JavaScript引擎本身所做的只是在给定任意时刻执行程序中的单个代码块。<br><strong>需要，谁的需要</strong>才是关键<br>时间循环：JavaScript宿主环境提供一种机制来处理程序中的多个块的执行，且执行每块时调用JavaScript引擎，这种机制被称为<strong>事件循环</strong>。<br><strong>“事件”</strong>(JavaScript代码执行)调度总是有他的环境进行的。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">// eventLoop是一个用作队列的数组(先进先出)</div><div class="line">var eventLoop = []</div><div class="line">var event</div><div class="line">// 永远执行</div><div class="line">while(true) &#123;</div><div class="line">  // 一次 tick</div><div class="line">  if(eventLoop.length &gt; 0) &#123;</div><div class="line">    // 拿到队列中的下一个事件</div><div class="line">    event = eventLoop.shift()</div><div class="line"></div><div class="line">    // 现在执行下一个事件</div><div class="line">    try &#123;</div><div class="line">      event()</div><div class="line">    &#125;</div><div class="line">    catch(err) &#123;</div><div class="line">      console.err(error)</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<blockquote>
+<p>while 实现一个持续循环,每一轮成为一个tick,如果有队列等待,那么就从队列中摘取下一个事件并执行,这就是回调函数。<br>假设有20个项目，回调就会等待，他得排在其他项目后面–通常没有<strong>抢占式</strong>的方式支持直接排到队首(不能插队),所以setTimeout的精度不高<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">// ...其他的代码</div><div class="line">setTimeout( function()&#123;&#125;, 20)</div><div class="line">// 假设前面的代码中有足够多的回调,而定时器的回调放在末尾</div><div class="line">// 在20ms的时候还在执行其他的回调,那么定时器就不精确</div></pre></td></tr></table></figure></p>
+</blockquote>
+<h3 id="并行线程"><a href="#并行线程" class="headerlink" title="并行线程"></a><strong>并行线程</strong></h3><ul>
+<li>异步是关于<strong>现在</strong>和<strong>将来</strong>的时间间隙</li>
+<li>并行是关于能够<strong>同时</strong>发生的事情</li>
+</ul>
+<h3 id="完整运行"><a href="#完整运行" class="headerlink" title="完整运行"></a><strong>完整运行</strong></h3><p><strong>竞态条件</strong>:函数顺序的不确定性,无法可靠的预测结果既形成竞态.</p>
+<h3 id="并发"><a href="#并发" class="headerlink" title="并发"></a><strong>并发</strong></h3><p>两个或多个’进程’同时执行就叫并发,并发可以看做’任务’级的并行,而运算级的并行体现在线程上<br><strong>非交互</strong>:如果进程间不影响,不确定性是可以接受的<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">ajax(&apos;url1&apos;, foo)</div><div class="line">ajax(&apos;url2&apos;, bar)</div><div class="line">// 两者之间并没有逻辑交互</div></pre></td></tr></table></figure></p>
+<p><strong>交互</strong>:如果进程间不影响,不确定性是可以接受的<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">var res = []</div><div class="line">handle(result) &#123;</div><div class="line">  res.push(result)</div><div class="line">&#125;</div><div class="line">ajax(&apos;url1&apos;, handle)</div><div class="line">ajax(&apos;url2&apos;, handle)</div><div class="line">// 两者都调用一个处理逻辑,形成了**竞态条件**</div></pre></td></tr></table></figure></p>
+<p><strong>协作</strong>:如果进程间不影响,不确定性是可以接受的<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">var res = []</div><div class="line">handle(data) &#123;</div><div class="line">  res.push(data)</div><div class="line">  // 一次处理1000个</div><div class="line">  var chunk = data.splice(0,1000)</div><div class="line"></div><div class="line">  // 添加到已有的res数组</div><div class="line">  res = res.concat(</div><div class="line">    chunk.map((item) =&gt; item*2)</div><div class="line">   )</div><div class="line"></div><div class="line">   // 如果还有数据</div><div class="line">   if(data.length &gt; 0) &#123;</div><div class="line">     // 异步处理</div><div class="line">     setTimeout(() =&gt; handle(data),0)</div><div class="line">   &#125;</div><div class="line">&#125;</div><div class="line">ajax(&apos;url1&apos;, handle)</div><div class="line">ajax(&apos;url2&apos;, handle)</div><div class="line">// 事件循环队列交替运行,把数据集合放在包含1000条项目中,确保&apos;进程&apos;运行时间很短,提高性能</div></pre></td></tr></table></figure></p>
+<h3 id="任务"><a href="#任务" class="headerlink" title="任务"></a><strong>任务</strong></h3><p><strong>任务队列</strong>: 挂在时间循环队列的每个tick之后的一个队列. 在事件循环队列的每个tick中,可能出现异步动作不会导致一个完整的新事件添加到事件循环队列中,而会在当前tick的任务队列末尾添加一个项目.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">console.log(&apos;A&apos;)</div><div class="line"></div><div class="line">setTimeout(() =&gt; console.log(&apos;B&apos;),0)</div><div class="line"></div><div class="line">schedule( () =&gt; &#123;</div><div class="line">  console.log(&apos;C&apos;)</div><div class="line">  schedule( () =&gt; &#123;</div><div class="line">    console.log(&apos;D&apos;)</div><div class="line">  &#125;)</div><div class="line">&#125;)</div><div class="line"></div><div class="line">// A C D B 定时器触发是为了调度下一个事件循环的tick</div></pre></td></tr></table></figure></p>
+<h3 id="语句顺序"><a href="#语句顺序" class="headerlink" title="语句顺序"></a><strong>语句顺序</strong></h3><p>代码在预编译阶段会重新安排语句顺序来提高执行速度<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">var a,b</div><div class="line">a = 10</div><div class="line">a++</div><div class="line">b = 30</div><div class="line">b++</div><div class="line">console.log( a + b ) // 42</div><div class="line"></div><div class="line">// 预编译之后</div><div class="line">var a,b</div><div class="line">a = 11</div><div class="line">b = 31</div><div class="line">console.log( a + b ) // 42</div></pre></td></tr></table></figure></p>
+<h2 id="回调"><a href="#回调" class="headerlink" title="回调"></a><strong>回调</strong></h2><h3 id="回调的顺序"><a href="#回调的顺序" class="headerlink" title="回调的顺序"></a><strong>回调的顺序</strong></h3><p><strong>嵌套回调与链式回调</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">// 回调地狱, 不停地嵌套回调函数</div><div class="line">// 现在执行 1</div><div class="line">listen(&apos;click&apos;, function handler(ev) &#123;</div><div class="line">  // 将来执行 2</div><div class="line">  setTimeout( function request() &#123;</div><div class="line">    // 还是将来执行 3</div><div class="line">    ajax(&apos;someurl&apos;, function response(text)&#123;</div><div class="line">      // 最后一个将来执行 4</div><div class="line">      if(text === &apos;hello&apos;) &#123;</div><div class="line">        handler();</div><div class="line">      &#125; else if(text === &apos;world&apos;) &#123;</div><div class="line">        request()</div><div class="line">      &#125;</div><div class="line">    &#125;)</div><div class="line">  &#125;, 500)</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
+<h3 id="回调的信任"><a href="#回调的信任" class="headerlink" title="回调的信任"></a><strong>回调的信任</strong></h3><p><strong>控制反转</strong>: 把自己执行的代码交给第三方(插件)<br>回调的问题:</p>
+<blockquote>
+<p><strong>调用回调过早</strong><br><strong>调用回调过晚</strong><br><strong>调用回调次数太多或太少</strong><br><strong>没有把环境/参数传递给回调函数</strong><br><strong>吞掉可能出错的异常</strong></p>
+</blockquote>
+<p>建议:<strong>永远异步调用回调,即使就在事件循环的下一轮</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">function result(data) &#123;</div><div class="line">  console.log(a)</div><div class="line">&#125;</div><div class="line">var a = 0</div><div class="line">ajax(&apos;someurl&apos;, result)</div><div class="line">a++</div><div class="line">// 并不知道会输出什么 同步为0 异步为1</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">// 强制变成异步执行</div><div class="line">function asyncify(fn) &#123;</div><div class="line">  var orig_fn = fn</div><div class="line">  intv = setTimeout( function()&#123;</div><div class="line">    intv = null</div><div class="line">    if(fn) fn();</div><div class="line">  &#125;,0)</div><div class="line">  fn = null</div><div class="line">  return function() &#123;</div><div class="line">    // 触发太快, 定时器intv触发指示异步转换发生之前</div><div class="line">    if(intv) &#123;</div><div class="line">      fn = orig_fn.bind.apply(orig_fn,</div><div class="line">        // 把封装的this添加到bind调用参数中</div><div class="line">        // 以及柯里化所传入的参数</div><div class="line">        [this].concat( [].slice.call(arguments))</div><div class="line">      )</div><div class="line">    &#125;</div><div class="line">    // 已经是异步</div><div class="line">     else &#123;</div><div class="line">       // 调用原来的函数</div><div class="line">       orign_fn.apply(this, arguments)</div><div class="line">     &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/异步/" rel="tag"># 异步</a>
+          
+            <a href="/tags/回调/" rel="tag"># 回调</a>
+          
+            <a href="/tags/时间循环/" rel="tag"># 时间循环</a>
+          
+            <a href="/tags/JavaScript/" rel="tag"># JavaScript</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/04/22/javascript类型转换-1/" rel="next" title="javascript类型转换">
+                <i class="fa fa-chevron-left"></i> javascript类型转换
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2018/04/28/异步与回调-一/"
+           data-title="异步与性能(一)：异步与回调" data-url="https://machock.github.io/2018/04/28/异步与回调-一/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Machock" />
+          <p class="site-author-name" itemprop="name">Machock</p>
+           
+              <p class="site-description motion-element" itemprop="description">JavaScript、css、html</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#目录"><span class="nav-number">1.</span> <span class="nav-text">目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#异步-现在与将来"><span class="nav-number">2.</span> <span class="nav-text">异步:现在与将来</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#分块程序"><span class="nav-number">2.1.</span> <span class="nav-text">分块程序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#事件循环"><span class="nav-number">2.2.</span> <span class="nav-text">事件循环</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#并行线程"><span class="nav-number">2.3.</span> <span class="nav-text">并行线程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#完整运行"><span class="nav-number">2.4.</span> <span class="nav-text">完整运行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#并发"><span class="nav-number">2.5.</span> <span class="nav-text">并发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#任务"><span class="nav-number">2.6.</span> <span class="nav-text">任务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#语句顺序"><span class="nav-number">2.7.</span> <span class="nav-text">语句顺序</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#回调"><span class="nav-number">3.</span> <span class="nav-text">回调</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#回调的顺序"><span class="nav-number">3.1.</span> <span class="nav-text">回调的顺序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#回调的信任"><span class="nav-number">3.2.</span> <span class="nav-text">回调的信任</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Machock</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"your-duoshuo-shortname"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>
